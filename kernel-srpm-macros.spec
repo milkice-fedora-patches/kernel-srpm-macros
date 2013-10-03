@@ -30,6 +30,10 @@ Source300:      kmodtool
 Source301:      rpmsort
 Source302:      symset-table
 
+# kabi provides generator
+Source400: kabi.attr
+Source401: kabi.sh
+
 %global rrcdir /usr/lib/rpm/redhat
 
 
@@ -74,13 +78,17 @@ install -p -m 755 -t %{buildroot}%{rrcdir}/find-provides.d firmware.prov modalia
 install -p -m 644 -t %{buildroot}%{_rpmconfigdir}/macros.d macros.kmp
 install -p -m 644 -t %{buildroot}%{_fileattrsdir} kmod.attr
 
+install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" kabi.attr
+install -p -m 755 -t "%{buildroot}%{_rpmconfigdir}" kabi.sh
 
 %files
 %{_rpmconfigdir}/macros.d/macros.kernel-srpm
 %{_fileattrsdir}/kmod.attr
 
 %files -n kernel-rpm-macros
+%{_rpmconfigdir}/kabi.sh
 %{_rpmconfigdir}/macros.d/macros.kmp
+%{_fileattrsdir}/kabi.attr
 %dir %{rrcdir}/find-provides.d
 %{rrcdir}/kmodtool
 %{rrcdir}/rpmsort
