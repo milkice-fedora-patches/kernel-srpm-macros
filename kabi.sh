@@ -7,7 +7,7 @@
 
 IFS=$'\n'
 
-for symvers in $(grep -E '/lib/modules/[1-9].*/symvers\.gz') "$@";
+for symvers in $(grep -E '(/boot/symvers-.*|/lib/modules/[1-9].*/symvers)\.gz') "$@";
 do
     zcat $symvers | awk ' {print "kernel(" $2 ") = " $1 }'
 done
