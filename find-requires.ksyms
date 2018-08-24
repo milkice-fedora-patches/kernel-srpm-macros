@@ -9,24 +9,49 @@ IFS=$'\n'
 
 # Extract all of the symbols provided by this module.
 all_provides() {
-    if [[ -n $(nm "$@" | sed -r -ne 's:^0*([0-9a-f]+) A __crc_(.+):0x\1 \2:p') ]]; then
-        nm "$@" \
-        | sed -r -ne 's:^0*([0-9a-f]+) A __crc_(.+):0x\1 \2:p' \
-        | awk --non-decimal-data '{printf("%s:0x%08x\n", $2, $1)}' \
-        | LC_ALL=C sort -k1,1 -u
-    else
-        ELFRODATA=$(readelf -R .rodata "$@" | awk '/0x/{printf $2$3$4$5}')
-        if [[ -n $(readelf -h "$@" | grep "little endian") ]]; then
-            RODATA=$(echo $ELFRODATA | sed 's/\(..\)\(..\)\(..\)\(..\)/\4\3\2\1/g')
-        else
-            RODATA=$ELFRODATA
+    for module in "$@"; do
+        tmpfile=""
+        if [ "x${module%.ko}" = "x${module}" ]; then
+            tmpfile=$(mktemp -t ${0##*/}.XXXXXX.ko)
+            proc_bin=
+            case "${module##*.}" in
+            xz)
+                    proc_bin=xz
+                    ;;
+            bz2)
+                    proc_bin=bzip2
+                    ;;
+            gz)
+                    proc_bin=gzip
+                    ;;
+            esac
+
+            [ -n "$proc_bin" ] || continue
+
+            "$proc_bin" -d -c - < "$module" > "$tmpfile" || continue
+            module="$tmpfile"
         fi
-        for sym in $(nm "$@" | sed -r -ne 's:^0*([0-9a-f]+) R __crc_(.+):0x\1 \2:p'); do
-            echo $sym $RODATA
-        done \
-        | awk --non-decimal-data '{printf("%s:0x%08s\n", $2, substr($3,($1*2)+1,8))}' \
-        | LC_ALL=C sort -k1,1 -u
-    fi
+
+        if [[ -n $(nm "$module" | sed -r -ne 's:^0*([0-9a-f]+) A __crc_(.+):0x\1 \2:p') ]]; then
+            nm "$module" \
+            | sed -r -ne 's:^0*([0-9a-f]+) A __crc_(.+):0x\1 \2:p' \
+            | awk --non-decimal-data '{printf("%s:0x%08x\n", $2, $1)}'
+        else
+            ELFRODATA=$(readelf -R .rodata "$module" | awk '/0x/{printf $2$3$4$5}')
+            if [[ -n $(readelf -h "$module" | grep "little endian") ]]; then
+                RODATA=$(echo $ELFRODATA | sed 's/\(..\)\(..\)\(..\)\(..\)/\4\3\2\1/g')
+            else
+                RODATA=$ELFRODATA
+            fi
+            for sym in $(nm "$module" | sed -r -ne 's:^0*([0-9a-f]+) R __crc_(.+):0x\1 \2:p'); do
+                echo $sym $RODATA
+            done \
+            | awk --non-decimal-data '{printf("%s:0x%08s\n", $2, substr($3,($1*2)+1,8))}'
+        fi
+
+        [ -z "$tmpfile" ] || rm -f -- "$tmpfile"
+    done \
+    | LC_ALL=C sort -k1,1 -u
 }
 
 # Extract all of the requirements of this module.
@@ -98,7 +123,7 @@ check_kabi() {
     fi
 }
 
-modules=($(grep -E '/lib/modules/.+\.ko$'))
+modules=($(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$'))
 if [ ${#modules[@]} -gt 0 ]; then
     kernel=$(/sbin/modinfo -F vermagic "${modules[0]}" | sed -e 's: .*::' -e q)
 
