@@ -133,6 +133,8 @@ Provides:         kernel-modules >= ${verrel}${dotvariant}
 Provides:         ${kmod_name}-kmod = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires(post):   /usr/sbin/depmod
 Requires(postun): /usr/sbin/depmod
+Requires(post):   /usr/sbin/weak-modules
+Requires(postun): /usr/sbin/weak-modules
 EOF
 
     if [ "yes" != "$nobuildreqs" ]
@@ -164,9 +166,9 @@ if [ -e "/boot/System.map-${verrel}${dotvariant}" ]; then
 fi
 
 modules=( \$(find /lib/modules/${verrel}${dotvariant}/extra/${kmod_name} | grep '\.ko$') )
-if [ -x "/sbin/weak-modules" ]; then
+if [ -x "/usr/sbin/weak-modules" ]; then
     printf '%s\n' "\${modules[@]}" \
-    | /sbin/weak-modules --add-modules
+    | /usr/sbin/weak-modules --add-modules
 fi
 EOF
 
@@ -183,9 +185,9 @@ fi
 
 modules=( \$(cat /var/run/rpm-kmod-${kmod_name}${dashvariant}-modules) )
 rm /var/run/rpm-kmod-${kmod_name}${dashvariant}-modules
-if [ -x "/sbin/weak-modules" ]; then
+if [ -x "/usr/sbin/weak-modules" ]; then
     printf '%s\n' "\${modules[@]}" \
-    | /sbin/weak-modules --remove-modules
+    | /usr/sbin/weak-modules --remove-modules
 fi
 EOF
 
