@@ -139,7 +139,12 @@ EOF
 
     if [ "yes" != "$nobuildreqs" ]
     then
-        echo "BuildRequires: kernel${dashvariant}-devel"
+        cat <<EOF
+BuildRequires:    kernel${dashvariant}-devel
+BuildRequires:    kernel-abi-stablelists
+BuildRequires:    redhat-rpm-config kernel-rpm-macros
+BuildRequires:    elfutils-libelf-devel kmod
+EOF
     fi
 
     if [ "" != "$override_preamble" ]
