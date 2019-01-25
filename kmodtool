@@ -52,7 +52,7 @@ variant=
 get_verrel ()
 {
   verrel=${1:-$(uname -r)}
-  verrel=${verrel/%.$knownvariants/}
+  verrel=${verrel/%[.+]$knownvariants/}
 }
 
 print_verrel ()
@@ -65,7 +65,7 @@ get_variant ()
 {
   get_verrel "$@"
   variant=${1:-$(uname -r)}
-  variant=${variant/#$verrel?(.)/}
+  variant=${variant/#$verrel?(.+)/}
   variant=${variant:-'""'}
 }
 
@@ -73,6 +73,45 @@ print_variant ()
 {
   get_variant $@
   echo "${variant}"
+}
+
+# Detect flavor separator character. We have to do that due to
+# a systemd-tailored patch for kernel spec[1][2] introduced in Fedora and then
+# imported in RHEL 8 that broke all OOT kmod infrastructure for the flavored
+# kernels.
+#
+# [1] https://lists.fedoraproject.org/pipermail/kernel/2013-June/004262.html
+# [2] https://src.fedoraproject.org/rpms/kernel/c/faf25207dc86666a611c45ae3ffaf385c170bd2a
+#
+# $1 - kver
+# $2 - variant
+get_variant_char ()
+{
+  variant="$2"
+  [ "$variant" != "default" ] || variant=""
+
+  get_verrel "$1"
+
+  variant_char=""
+  [ -n "$variant" ] || return 0
+
+  # We expect that the flavored kernel is already installed in the buildroot
+  variant_char="+"
+  [ -e "/usr/src/kernels/${verrel}+${variant}" ] && return 0
+
+  variant_char="."
+}
+
+print_variant_char ()
+{
+  get_variant_char "$@"
+  echo "${variant_char}"
+}
+
+print_kernel_source ()
+{
+  get_variant_char "$@"
+  echo "/usr/src/kernels/${verrel}${variant_char}${variant}"
 }
 
 get_filelist() {
@@ -89,6 +128,7 @@ get_filelist() {
 				| sed -e "s/%variant/$variant/g" \
 				| sed -e "s/%dashvariant/$dashvariant/g" \
 				| sed -e "s/%dotvariant/$dotvariant/g" \
+				| sed -e "s/\+%1/$dotvariant/g" \
 				| sed -e "s/\.%1/$dotvariant/g" \
 				| sed -e "s/\-%1/$dotvariant/g" \
 				| sed -e "s/%2/$verrel/g")
@@ -104,8 +144,11 @@ get_filelist() {
 get_rpmtemplate ()
 {
     local variant="${1}"
+
+    get_variant_char "${verrel}" "${variant}"
+
     local dashvariant="${variant:+-${variant}}"
-    local dotvariant="${variant:+.${variant}}"
+    local dotvariant="${variant:+${variant_char}${variant}}"
 
     echo "%package       -n kmod-${kmod_name}${dashvariant}"
 
@@ -246,6 +289,10 @@ Usage: ${myprog} <command> <option>+
     - Get "base" version-release.
   variant <uname>
     - Get variant from uname.
+  variant_char <uname> <variant>
+    - Get kernel variant separator character.
+  kernel_source <uname> <variant>
+    - Get path to kernel source directory.
   rpmtemplate <mainpgkname> <uname> <variants>
     - Return a template for use in a source RPM
   version
@@ -264,6 +311,16 @@ while [ "${1}" ] ; do
     variant)
       shift
       print_variant "$@"
+      exit $?
+      ;;
+    variant_char)
+      shift
+      print_variant_char "$@"
+      exit $?
+      ;;
+    kernel_source)
+      shift
+      print_kernel_source "$@"
       exit $?
       ;;
     rpmtemplate)
