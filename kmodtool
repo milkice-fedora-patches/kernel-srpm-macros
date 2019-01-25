@@ -57,13 +57,13 @@ get_verrel ()
 
 print_verrel ()
 {
-  get_verrel $@
+  get_verrel "$@"
   echo "${verrel}"
 }
 
 get_variant ()
 {
-  get_verrel $@
+  get_verrel "$@"
   variant=${1:-$(uname -r)}
   variant=${variant/#$verrel?(.)/}
   variant=${variant:-'""'}
@@ -258,12 +258,12 @@ while [ "${1}" ] ; do
   case "${1}" in
     verrel)
       shift
-      print_verrel $@
+      print_verrel "$@"
       exit $?
       ;;
     variant)
       shift
-      print_variant $@
+      print_variant "$@"
       exit $?
       ;;
     rpmtemplate)
