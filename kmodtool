@@ -173,6 +173,7 @@ get_rpmtemplate ()
 
     cat <<EOF
 Provides:         kernel-modules >= ${verrel}${dotvariant}
+Provides:         kernel${dashvariant}-modules >= ${verrel}
 Provides:         ${kmod_name}-kmod = %{?epoch:%{epoch}:}%{version}-%{release}
 Requires(post):   /usr/sbin/depmod
 Requires(postun): /usr/sbin/depmod
