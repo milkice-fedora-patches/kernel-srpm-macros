@@ -42,7 +42,7 @@
 shopt -s extglob
 
 myprog="kmodtool"
-myver="0.10.10_kmp2"
+myver="0.10.10_rhel9"
 knownvariants=@(debug|kdump|zfcpdump)
 kmod_name=
 kver=
