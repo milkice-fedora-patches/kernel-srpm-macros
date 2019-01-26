@@ -34,6 +34,10 @@ Source302:      symset-table
 Source400: kabi.attr
 Source401: kabi.sh
 
+# BRPs
+Source500: brp-kmod-set-exec-bit
+Source501: brp-kmod-restore-perms
+
 %global rrcdir /usr/lib/rpm/redhat
 
 
@@ -47,6 +51,9 @@ Version: 185
 Release: %{release}%{?dist}.1
 Summary: Macros and scripts for building kernel module packages
 Requires: redhat-rpm-config >= 13
+
+# for brp-kmod-set-exec-bit
+Requires: %{_bindir}/find
 
 %description -n kernel-rpm-macros
 Macros and scripts for building kernel module packages.
@@ -75,6 +82,7 @@ mkdir -p %{buildroot}%{_fileattrsdir}
 install -p -m 755 -t %{buildroot}%{rrcdir} kmodtool rpmsort symset-table
 install -p -m 755 -t %{buildroot}%{rrcdir} find-provides.ksyms find-requires.ksyms
 install -p -m 755 -t %{buildroot}%{rrcdir}/find-provides.d firmware.prov modalias.prov
+install -p -m 755 -t %{buildroot}%{rrcdir} brp-kmod-restore-perms brp-kmod-set-exec-bit
 install -p -m 644 -t %{buildroot}%{_rpmconfigdir}/macros.d macros.kmp
 install -p -m 644 -t %{buildroot}%{_fileattrsdir} kmod.attr
 
@@ -90,6 +98,8 @@ install -p -m 755 -t "%{buildroot}%{_rpmconfigdir}" kabi.sh
 %{_rpmconfigdir}/macros.d/macros.kmp
 %{_fileattrsdir}/kabi.attr
 %dir %{rrcdir}/find-provides.d
+%{rrcdir}/brp-kmod-restore-perms
+%{rrcdir}/brp-kmod-set-exec-bit
 %{rrcdir}/kmodtool
 %{rrcdir}/rpmsort
 %{rrcdir}/symset-table
