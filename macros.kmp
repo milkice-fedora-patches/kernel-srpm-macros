@@ -2,6 +2,8 @@
 redhat_kernel_module_package	1
 kernel_module_package_release	1
 
+redhat_kmp_has_post_hooks	1
+
 %__brp_kmod_set_exec_bit  /usr/lib/rpm/redhat/brp-kmod-set-exec-bit
 %__brp_kmod_restore_perms /usr/lib/rpm/redhat/brp-kmod-restore-perms
 
@@ -48,6 +50,11 @@ kernel_module_package_release	1
 		echo "	%%%%{?__debug_package:%%%%{__debug_install_post}} \\\\" \
 		echo "	%%{__arch_install_post} \\\\" \
 		echo "	%%{__os_install_post} \\\\" \
+		echo "	%%{?__brp_kmod_pre_sign_process} \\\\" \
+		echo "	%%{?__brp_kmod_sign} \\\\" \
+		echo "	%%{?__brp_kmod_post_sign_process} \\\\" \
+		echo "	%%{?__brp_kmod_compress} \\\\" \
+		echo "	%%{?__brp_kmod_post_compress_process} \\\\" \
 		echo "	%%{?__brp_kmod_restore_perms} \\\\" \
 		echo "%%{nil}" \
 	fi \
