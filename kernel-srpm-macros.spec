@@ -9,6 +9,8 @@ Summary:        RPM macros that list arches the full kernel is built on
 License:        MIT
 URL:            https://src.fedoraproject.org/rpms/kernel-srpm-macros
 BuildArch:      noarch
+# We are now the ones shipping kmod.attr
+Conflicts:      redhat-rpm-config <= 186
 
 # Macros
 Source0:        macros.kernel-srpm
@@ -20,10 +22,13 @@ Source101:      find-requires.ksyms
 Source102:      firmware.prov
 Source103:      modalias.prov
 
+# Dependency generators & their rules
+Source200:      kmod.attr
+
 # Misc helper scripts
-Source200:      kmodtool
-Source201:      rpmsort
-Source202:      symset-table
+Source300:      kmodtool
+Source301:      rpmsort
+Source302:      symset-table
 
 %global rrcdir /usr/lib/rpm/redhat
 
@@ -67,10 +72,12 @@ install -p -m 755 -t %{buildroot}%{rrcdir} kmodtool rpmsort symset-table
 install -p -m 755 -t %{buildroot}%{rrcdir} find-provides.ksyms find-requires.ksyms
 install -p -m 644 -t %{buildroot}%{rrcdir}/find-provides.d firmware.prov modalias.prov
 install -p -m 644 -t %{buildroot}%{_rpmconfigdir}/macros.d macros.kmp
+install -p -m 644 -t %{buildroot}%{_fileattrsdir} kmod.attr
 
 
 %files
 %{_rpmconfigdir}/macros.d/macros.kernel-srpm
+%{_fileattrsdir}/kmod.attr
 
 %files -n kernel-rpm-macros
 %{_rpmconfigdir}/macros.d/macros.kmp
@@ -85,7 +92,7 @@ install -p -m 644 -t %{buildroot}%{_rpmconfigdir}/macros.d macros.kmp
 
 %changelog
 * Thu Jun 03 2021 Michal Domonkos <mdomonko@redhat.com> - 1.0-5
-- Adopt kernel-rpm-macros subpackage from redhat-rpm-config
+- Adopt kernel-rpm-macros & kmod.attr subpackage from redhat-rpm-config
 
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
