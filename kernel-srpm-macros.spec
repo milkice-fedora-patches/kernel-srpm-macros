@@ -70,7 +70,7 @@ mkdir -p %{buildroot}%{rrcdir}/find-provides.d
 mkdir -p %{buildroot}%{_fileattrsdir}
 install -p -m 755 -t %{buildroot}%{rrcdir} kmodtool rpmsort symset-table
 install -p -m 755 -t %{buildroot}%{rrcdir} find-provides.ksyms find-requires.ksyms
-install -p -m 644 -t %{buildroot}%{rrcdir}/find-provides.d firmware.prov modalias.prov
+install -p -m 755 -t %{buildroot}%{rrcdir}/find-provides.d firmware.prov modalias.prov
 install -p -m 644 -t %{buildroot}%{_rpmconfigdir}/macros.d macros.kmp
 install -p -m 644 -t %{buildroot}%{_fileattrsdir} kmod.attr
 
