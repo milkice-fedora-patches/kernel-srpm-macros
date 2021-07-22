@@ -1,6 +1,6 @@
 Name:           kernel-srpm-macros
 Version:        1.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        RPM macros that list arches the full kernel is built on
 # This package only exist in Fedora repositories
 # The license is the standard (MIT) specified in
@@ -40,7 +40,7 @@ The variable to use is kernel_arches.
 
 %package -n kernel-rpm-macros
 Version: 185
-Release: %{release}%{?dist}
+Release: %{release}%{?dist}.1
 Summary: Macros and scripts for building kernel module packages
 Requires: redhat-rpm-config >= 13
 
@@ -91,6 +91,9 @@ install -p -m 644 -t %{buildroot}%{_fileattrsdir} kmod.attr
 %{rrcdir}/find-provides.d/modalias.prov
 
 %changelog
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.0-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
 * Thu Jun 03 2021 Michal Domonkos <mdomonko@redhat.com> - 1.0-5
 - Adopt kernel-rpm-macros & kmod.attr subpackage from redhat-rpm-config
 
