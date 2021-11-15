@@ -16,11 +16,14 @@ Conflicts:      redhat-rpm-config <= 186
 Source0:        macros.kernel-srpm
 Source1:        macros.kmp
 
-# Dependency generator scripts (deprecated)
+# Dependency generator scripts
 Source100:      find-provides.ksyms
 Source101:      find-requires.ksyms
 Source102:      firmware.prov
 Source103:      modalias.prov
+Source104:      provided_ksyms.attr
+Source105:      required_ksyms.attr
+Source106:      modalias.attr
 
 # Dependency generators & their rules
 Source200:      kmod.attr
@@ -89,6 +92,9 @@ install -p -m 644 -t %{buildroot}%{_fileattrsdir} kmod.attr
 install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" kabi.attr
 install -p -m 755 -t "%{buildroot}%{_rpmconfigdir}" kabi.sh
 
+install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" provided_ksyms.attr required_ksyms.attr
+install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
+
 %files
 %{_rpmconfigdir}/macros.d/macros.kernel-srpm
 %{_fileattrsdir}/kmod.attr
@@ -97,6 +103,9 @@ install -p -m 755 -t "%{buildroot}%{_rpmconfigdir}" kabi.sh
 %{_rpmconfigdir}/kabi.sh
 %{_rpmconfigdir}/macros.d/macros.kmp
 %{_fileattrsdir}/kabi.attr
+%{_fileattrsdir}/modalias.attr
+%{_fileattrsdir}/provided_ksyms.attr
+%{_fileattrsdir}/required_ksyms.attr
 %dir %{rrcdir}/find-provides.d
 %{rrcdir}/brp-kmod-restore-perms
 %{rrcdir}/brp-kmod-set-exec-bit

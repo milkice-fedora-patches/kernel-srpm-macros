@@ -123,7 +123,7 @@ check_kabi() {
     fi
 }
 
-modules=($(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$'))
+modules=($(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@")
 if [ ${#modules[@]} -gt 0 ]; then
     kernel=$(/sbin/modinfo -F vermagic "${modules[0]}" | sed -e 's: .*::' -e q)
 

@@ -168,9 +168,6 @@ get_rpmtemplate ()
         echo "Release: %{kmod_release}"
     fi
 
-    # Turn of the internal dep generator so we will use the kmod scripts.
-    echo "%global _use_internal_dependency_generator 0"
-
     cat <<EOF
 Provides:         kernel-modules >= ${verrel}${dotvariant}
 Provides:         kernel${dashvariant}-modules >= ${verrel}

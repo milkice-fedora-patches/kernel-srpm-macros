@@ -9,9 +9,6 @@ redhat_kmp_has_post_hooks	1
 
 %__kmod_brps_added 0
 
-%__find_provides        /usr/lib/rpm/redhat/find-provides
-%__find_requires        /usr/lib/rpm/redhat/find-requires
-
 #kernel_module_package [ -n name ] [ -v version ] [ -r release ] [ -s script ]
 #                      [ -f filelist] [ -x ] [ -p preamble ] flavor flavor ...
 

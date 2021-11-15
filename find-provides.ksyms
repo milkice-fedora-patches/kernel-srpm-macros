@@ -2,7 +2,7 @@
 
 IFS=$'\n'
 
-for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$'); do
+for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
     tmpfile=""
     if [ "x${module%.ko}" = "x${module}" ]; then
         tmpfile=$(mktemp -t ${0##*/}.XXXXXX.ko)
