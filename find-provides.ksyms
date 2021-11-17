@@ -3,6 +3,11 @@
 IFS=$'\n'
 
 for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
+    dep_pfx="ksym"
+    # For built-in kmods, "kernel()" syntax is used instead of "ksym()"
+    printf "%s" "$module" | grep -v "^${RPM_BUILD_ROOT}/\?lib/modules/[1-9][^/]*/kernel" > /dev/null \
+	|| dep_pfx="kernel"
+
     tmpfile=""
     if [ "x${module%.ko}" = "x${module}" ]; then
         tmpfile=$(mktemp -t ${0##*/}.XXXXXX.ko)
@@ -28,7 +33,7 @@ for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
     if [[ -n $(nm $module | sed -r -ne 's:^0*([0-9a-f]+) A __crc_(.+):0x\1 \2:p') ]]; then
         nm $module \
         | sed -r -ne 's:^0*([0-9a-f]+) A __crc_(.+):0x\1 \2:p' \
-        | awk --non-decimal-data '{printf("ksym(%s) = 0x%08x\n", $2, $1)}' \
+        | awk --non-decimal-data '{printf("'"${dep_pfx}"'(%s) = 0x%08x\n", $2, $1)}' \
         | LC_ALL=C sort -u
     else
         ELFRODATA=$(readelf -R .rodata $module | awk '/0x/{printf $2$3$4$5}')
@@ -40,7 +45,7 @@ for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
         for sym in $(nm $module | sed -r -ne 's:^0*([0-9a-f]+) R __crc_(.+):0x\1 \2:p'); do
             echo $sym $RODATA
         done \
-        | awk --non-decimal-data '{printf("ksym(%s) = 0x%08s\n", $2, substr($3,($1*2)+1,8))}' \
+        | awk --non-decimal-data '{printf("'"${dep_pfx}"'(%s) = 0x%08s\n", $2, substr($3,($1*2)+1,8))}' \
         | LC_ALL=C sort -u
     fi
 
