@@ -14,6 +14,13 @@ which chmod >/dev/null || exit 0
 while read perm path; do
 	[ -n "$perm" ] || continue
 
+	# Account for possible kernel module compression
+	[ -e "$RPM_BUILD_ROOT/$path" ] || {
+		[ \! -e "$RPM_BUILD_ROOT/$path.gz"  ] || path="$path.gz"
+		[ \! -e "$RPM_BUILD_ROOT/$path.bz2" ] || path="$path.bz2"
+		[ \! -e "$RPM_BUILD_ROOT/$path.xz"  ] || path="$path.xz"
+	}
+
 	chmod "$perm" "$RPM_BUILD_ROOT/$path"
 done < "$RPM_BUILD_ROOT/kmod-permissions.list"
 
