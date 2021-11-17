@@ -67,16 +67,12 @@ combine_modaliases() {
 for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz|\.zst)?$') "$@"; do
     # | head -n1 because some modules have *two* version tags. *cough*b44*cough*
     modver=$(/sbin/modinfo -F version "$module"| head -n1)
-    modver=${modver// /_}
-
+    modver=${modver//[^0-9a-zA-Z._]/_}
     # only add version tag if it has a version
-    if [ -n "$modver" ]; then
-        /sbin/modinfo -F alias "$module" \
-        | sed -nre "s,(.+),modalias(\\1) = $modver,p"
-    else
-        /sbin/modinfo -F alias "$module" \
-        | sed -nre "s,(.+),modalias(\\1),p"
-    fi
+    [ -z "$modver" ] || modver=" = $modver"
+
+    /sbin/modinfo -F alias "$module" \
+    | sed -nre "s,[^][0-9a-zA-Z._:*?/-],_,g; s,(.+),modalias(\\1)$modver,p"
 done \
 | sort -u \
 | combine_modaliases
