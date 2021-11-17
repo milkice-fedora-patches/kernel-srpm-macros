@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash -efu
 
 # heavily based upon find-suggests.ksyms by Andreas Gruenbacher <agruen@suse.de>.
 # with modifications by Michael Brown <Michael_E_Brown@dell.com>
@@ -14,7 +14,8 @@ IFS=$'\n'
 # completeness, so that we can determine when drivers are folded into
 # mainline kernel.
 #
-case "$1" in
+is_kernel_package=""
+case "${1:-}" in
 kernel-module-*)    ;; # Fedora kernel module package names start with
 		       # kernel-module.
 kernel*)	   is_kernel_package=1 ;;
@@ -24,6 +25,11 @@ if ! [ -z "$is_kernel_package" ]; then
     cat > /dev/null
     exit 0
 fi
+
+# Check for presence of the commands used
+which /sbin/modinfo >/dev/null || exit 0
+which sed >/dev/null || exit 0
+which sort >/dev/null || exit 0
 
 print_modaliases() {
     declare class=$1 variants=$2 pos=$3
@@ -35,7 +41,7 @@ print_modaliases() {
 }
 
 combine_modaliases() {
-    declare tag class variants pos n
+    declare tag class variants="" pos="" n
     read class
     while read tag; do
 	for ((n=0; n<${#class}; n++)); do
