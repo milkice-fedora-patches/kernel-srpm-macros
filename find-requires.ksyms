@@ -15,6 +15,9 @@ all_provides() {
             tmpfile=$(mktemp -t ${0##*/}.XXXXXX.ko)
             proc_bin=
             case "${module##*.}" in
+            zst)
+                    proc_bin=zstd
+                    ;;
             xz)
                     proc_bin=xz
                     ;;
@@ -123,7 +126,7 @@ check_kabi() {
     fi
 }
 
-modules=($(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@")
+modules=($(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz|\.zst)?$') "$@")
 if [ ${#modules[@]} -gt 0 ]; then
     kernel=$(/sbin/modinfo -F vermagic "${modules[0]}" | sed -e 's: .*::' -e q)
 

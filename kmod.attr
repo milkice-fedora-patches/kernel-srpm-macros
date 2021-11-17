@@ -1,10 +1,10 @@
-%__kmod_path           ^/lib/modules/.*/(modules.builtin|.*\.ko|.*\.ko\.gz|.*\.ko\.bz2|.*\.ko\.xz)$
+%__kmod_path           ^/lib/modules/.*/(modules.builtin|.*\.ko|.*\.ko\.gz|.*\.ko\.bz2|.*\.ko\.xz|.*\.ko\.zst)$
 %__kmod_provides() %{lua:
   function basename(fn)
       return string.gsub(fn, "(.*/)(.*)", "%2")
   end
   function strip_compress_sfx(fn)
-      return string.gsub(fn, "(.*)(\.gz|\.bz2|\.xz)?$", "%1")
+      return string.gsub(fn, "(.*)(\.gz|\.bz2|\.xz|\.zst)?$", "%1")
   end
   function printdep(mod)
       print("kmod("..mod..") ")

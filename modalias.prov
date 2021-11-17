@@ -58,7 +58,7 @@ combine_modaliases() {
     print_modaliases "$class" "$variants" "$pos"
 }
 
-for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
+for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz|\.zst)?$') "$@"; do
     # | head -n1 because some modules have *two* version tags. *cough*b44*cough*
     modver=$(/sbin/modinfo -F version "$module"| head -n1)
     modver=${modver// /_}

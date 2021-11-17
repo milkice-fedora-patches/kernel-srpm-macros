@@ -5,7 +5,7 @@
 
 IFS=$'\n'
 
-for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') $*;
+for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz|\.zst)?$') $*;
 do
     for firmware in `/sbin/modinfo -F firmware $module`;
     do

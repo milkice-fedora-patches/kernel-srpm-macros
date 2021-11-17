@@ -2,7 +2,7 @@
 
 IFS=$'\n'
 
-for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
+for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz|\.zst)?$') "$@"; do
     dep_pfx="ksym"
     # For built-in kmods, "kernel()" syntax is used instead of "ksym()"
     printf "%s" "$module" | grep -v "^${RPM_BUILD_ROOT}/\?lib/modules/[1-9][^/]*/kernel" > /dev/null \
@@ -13,6 +13,9 @@ for module in $(grep -E '/lib/modules/.+\.ko(\.gz|\.bz2|\.xz)?$') "$@"; do
         tmpfile=$(mktemp -t ${0##*/}.XXXXXX.ko)
         proc_bin=
         case "${module##*.}" in
+        zst)
+                proc_bin=zstd
+                ;;
         xz)
                 proc_bin=xz
                 ;;

@@ -19,6 +19,7 @@ while read perm path; do
 		[ \! -e "$RPM_BUILD_ROOT/$path.gz"  ] || path="$path.gz"
 		[ \! -e "$RPM_BUILD_ROOT/$path.bz2" ] || path="$path.bz2"
 		[ \! -e "$RPM_BUILD_ROOT/$path.xz"  ] || path="$path.xz"
+		[ \! -e "$RPM_BUILD_ROOT/$path.zst" ] || path="$path.zst"
 	}
 
 	chmod "$perm" "$RPM_BUILD_ROOT/$path"
