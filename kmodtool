@@ -214,7 +214,7 @@ if [ -e "/boot/System.map-${verrel}${dotvariant}" ]; then
     /usr/sbin/depmod -aeF "/boot/System.map-${verrel}${dotvariant}" "${verrel}${dotvariant}" > /dev/null || :
 fi
 
-modules=( \$(find /lib/modules/${verrel}${dotvariant}/extra/${kmod_name} | grep '\.ko$') )
+modules=( \$(find /lib/modules/${verrel}${dotvariant}/extra/${kmod_name} | grep -E '\.ko(\.gz|\.bz2|\.xz)?$') )
 if [ -x "/usr/sbin/weak-modules" ]; then
     printf '%s\n' "\${modules[@]}" \
     | /usr/sbin/weak-modules --add-modules
@@ -223,7 +223,7 @@ EOF
 
 cat <<EOF
 %preun         -n kmod-${kmod_name}${dashvariant}
-rpm -ql kmod-${kmod_name}${dashvariant}-%{kmod_version}-%{kmod_release}.$(arch) | grep '\.ko$' > /var/run/rpm-kmod-${kmod_name}${dashvariant}-modules
+rpm -ql kmod-${kmod_name}${dashvariant}-%{kmod_version}-%{kmod_release}.$(arch) | grep -E '\.ko(\.gz|\.bz2|\.xz)?$' > /var/run/rpm-kmod-${kmod_name}${dashvariant}-modules
 EOF
 
 cat <<EOF
