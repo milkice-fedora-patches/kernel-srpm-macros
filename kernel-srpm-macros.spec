@@ -97,11 +97,13 @@ install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
 
 %files
 %{_rpmconfigdir}/macros.d/macros.kernel-srpm
+%{_rpmconfigdir}/macros.d/macros.kmp
 %{_fileattrsdir}/kmod.attr
+%{rrcdir}/kmodtool
+%{rrcdir}/rpmsort
 
 %files -n kernel-rpm-macros
 %{_rpmconfigdir}/kabi.sh
-%{_rpmconfigdir}/macros.d/macros.kmp
 %{_fileattrsdir}/kabi.attr
 %{_fileattrsdir}/modalias.attr
 %{_fileattrsdir}/provided_ksyms.attr
@@ -109,8 +111,6 @@ install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
 %dir %{rrcdir}/find-provides.d
 %{rrcdir}/brp-kmod-restore-perms
 %{rrcdir}/brp-kmod-set-exec-bit
-%{rrcdir}/kmodtool
-%{rrcdir}/rpmsort
 %{rrcdir}/symset-table
 %{rrcdir}/find-provides.ksyms
 %{rrcdir}/find-requires.ksyms
