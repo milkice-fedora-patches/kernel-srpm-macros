@@ -13,7 +13,7 @@ redhat_kmp_has_post_hooks	1
 #                      [ -f filelist] [ -x ] [ -p preamble ] flavor flavor ...
 
 %kernel_module_package_buildreqs	%global kmodtool_generate_buildreqs 1 \
-					kernel-devel kernel-abi-stablelists redhat-rpm-config kernel-rpm-macros elfutils-libelf-devel kmod
+					kernel-devel redhat-rpm-config kernel-rpm-macros elfutils-libelf-devel kmod
 
 %kernel_module_package(n:v:r:s:f:xp:) %{expand:%( \
 	## An ugly hack: we want kmods to be processed by find-debuginfo,
