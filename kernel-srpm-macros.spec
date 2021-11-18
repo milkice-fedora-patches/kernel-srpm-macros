@@ -1,6 +1,7 @@
 Name:           kernel-srpm-macros
 Version:        1.0
-Release:        12%{?dist}
+# when bumping version and resetting release, don't forget to bump version of kernel-rpm-macros as well
+Release:        13%{?dist}
 Summary:        RPM macros that list arches the full kernel is built on
 # This package only exist in Fedora repositories
 # The license is the standard (MIT) specified in
@@ -13,7 +14,7 @@ BuildArch:      noarch
 Conflicts:      redhat-rpm-config < 205
 # macros.kmp, kmodtool and rpmsort were moved from kernel-rpm-macros
 # to kernel-srpm-macros in 1.0-9/185-9
-Conflicts:      kernel-rpm-macros < 185-12
+Conflicts:      kernel-rpm-macros < 205
 
 # Macros
 Source0:        macros.kernel-srpm
@@ -53,10 +54,9 @@ the full kernel is built on.
 The variable to use is kernel_arches.
 
 %package -n kernel-rpm-macros
-Version: 185
-Release: %{release}
+Version: 205
 Summary: Macros and scripts for building kernel module packages
-Requires: redhat-rpm-config >= 13
+Requires: redhat-rpm-config >= 205
 
 # for brp-kmod-set-exec-bit
 Requires: %{_bindir}/find
@@ -121,6 +121,9 @@ install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
 %{rrcdir}/rpmsort
 
 %changelog
+* Thu Nov 18 2021 Miro Hrončok <mhroncok@redhat.com> - 1.0-13
+- Bump kernel-rpm-macros to 205 to provide clear upgrade path
+
 * Thu Nov 18 2021 Miro Hrončok <mhroncok@redhat.com> - 1.0-12
 - Correct conflicts to redhat-rpm-macros < 205
 - Move Perl scripts back to kernel-rpm-macros to avoid Perl in the default buildroot
