@@ -1,6 +1,6 @@
 Name:           kernel-srpm-macros
 Version:        1.0
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        RPM macros that list arches the full kernel is built on
 # This package only exist in Fedora repositories
 # The license is the standard (MIT) specified in
@@ -10,10 +10,10 @@ License:        MIT
 URL:            https://src.fedoraproject.org/rpms/kernel-srpm-macros
 BuildArch:      noarch
 # We are now the ones shipping kmod.attr
-Conflicts:      redhat-rpm-config < 204
+Conflicts:      redhat-rpm-config < 205
 # macros.kmp, kmodtool and rpmsort were moved from kernel-rpm-macros
 # to kernel-srpm-macros in 1.0-9/185-9
-Conflicts:      kernel-rpm-macros < 185-9
+Conflicts:      kernel-rpm-macros < 185-12
 
 # Macros
 Source0:        macros.kernel-srpm
@@ -121,6 +121,9 @@ install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
 %{rrcdir}/find-provides.d/modalias.prov
 
 %changelog
+* Thu Nov 18 2021 Miro Hrončok <mhroncok@redhat.com> - 1.0-12
+- Correct conflicts to redhat-rpm-macros < 205
+
 * Thu Nov 18 2021 Eugene Syromiatnikov <esyr@redhat.com> - 1.0-11
 - Add conflicts of redhat-rpm-macros < 204 as macros.kmp, kmodtool,
   and rpmsort were moved from the latter to the former.
