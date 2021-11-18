@@ -150,9 +150,12 @@ if [ ${#modules[@]} -gt 0 ]; then
     LC_ALL=C join -t $'\t' -j 1 -v 2 $symvers "$mod_req" | LC_ALL=C sort -u \
     | awk 'BEGIN { FS = "[\t:]" ; OFS = "\t" } { print "ksym(" $1 ") = " $2 }'
 
-    # Check kABI if the kabi-stablelists package is installed
-    # Do this last so we can try to output this error at the end
-    kabi_check_symbols=($(LC_ALL=C join -t $'\t' -j 1 $symvers "$mod_req" | LC_ALL=C sort -u \
-    | awk 'BEGIN { FS = "[\t:]" ; OFS = "\t" } { print $1 }'))
-    check_kabi "${kabi_check_symbols[@]}"
+    os_id=$(sed -nr '/^ID[[:space:]]*=/{ s/ID[[:space:]]*=[[:space:]]*//; s/^"(.*)"$/\1/; p }' /etc/os-release)
+    if [ "rhel" = "$os_id" ]; then
+        # Check kABI if the kabi-stablelists package is installed
+        # Do this last so we can try to output this error at the end
+        kabi_check_symbols=($(LC_ALL=C join -t $'\t' -j 1 $symvers "$mod_req" | LC_ALL=C sort -u \
+        | awk 'BEGIN { FS = "[\t:]" ; OFS = "\t" } { print $1 }'))
+        check_kabi "${kabi_check_symbols[@]}"
+    fi
 fi
