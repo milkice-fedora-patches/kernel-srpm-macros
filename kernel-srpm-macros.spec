@@ -100,12 +100,10 @@ install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
 
 %files
 %{_rpmconfigdir}/macros.d/macros.kernel-srpm
-%{_rpmconfigdir}/macros.d/macros.kmp
 %{_fileattrsdir}/kmod.attr
-%{rrcdir}/kmodtool
-%{rrcdir}/rpmsort
 
 %files -n kernel-rpm-macros
+%{_rpmconfigdir}/macros.d/macros.kmp
 %{_rpmconfigdir}/kabi.sh
 %{_fileattrsdir}/kabi.attr
 %{_fileattrsdir}/modalias.attr
@@ -119,10 +117,13 @@ install -p -m 644 -t "%{buildroot}%{_fileattrsdir}" modalias.attr
 %{rrcdir}/find-requires.ksyms
 %{rrcdir}/find-provides.d/firmware.prov
 %{rrcdir}/find-provides.d/modalias.prov
+%{rrcdir}/kmodtool
+%{rrcdir}/rpmsort
 
 %changelog
 * Thu Nov 18 2021 Miro Hrončok <mhroncok@redhat.com> - 1.0-12
 - Correct conflicts to redhat-rpm-macros < 205
+- Move Perl scripts back to kernel-rpm-macros to avoid Perl in the default buildroot
 
 * Thu Nov 18 2021 Eugene Syromiatnikov <esyr@redhat.com> - 1.0-11
 - Add conflicts of redhat-rpm-macros < 204 as macros.kmp, kmodtool,
